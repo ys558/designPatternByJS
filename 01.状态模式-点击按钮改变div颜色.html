@@ -22,6 +22,7 @@
     // let state = "red";
     // const elstate = document.querySelector('.state')
     // document.querySelector('button').addEventListener('click', e=>{
+    // // 如果按普通的面向过程的写法, 需要创建多个if-else分支:
     //   if (state === 'red'){
     //     state = 'blue'
     //   }else if(state=='blue'){
@@ -32,23 +33,8 @@
     //   elstate.style.background = state
     // })
 
-    // 改写为状态模式:
-
-    // 1. 定义上下文状态类, 维护当前状态
-    class Context{
-      constructor(){
-        // 默认状态:
-        this.state = new RedState(this)
-      }
-      change(){
-        this.state.change()
-      }
-      getStateName(){
-        return this.state.name
-      }
-    }
-
-    // 2. 将所有状态进行抽象:
+    // 改为 状态模式 思想的写法:
+    // 1. 将所有状态进行抽象:
     class RedState{
       constructor(ctx){
         this.ctx = ctx
@@ -67,7 +53,6 @@
         this.ctx.state = new GreenState(this.ctx)
       }
     }
-
     class GreenState{
       constructor(ctx){
         this.ctx = ctx
@@ -77,6 +62,23 @@
         // this.ctx.state = new RedState(this.ctx)
         // 5. 配合步骤5, 新增了黄色状态, 将其切换到YellowState
         this.ctx.state = new YellowState(this.ctx)
+      }
+    }
+
+    // 2. 定义上下文状态类, 维护当前状态
+    class Context{
+      constructor(){
+        // 默认状态:
+        this.state = new RedState(this)
+      }
+      change(){
+        // console.log(this.state) // Object { ctx: {…}, name: "red" }
+        this.state.change()
+        // console.log(this.state) // Object { ctx: {…}, name: "blue" }
+      }
+      getStateName(){
+        // console.log(this.state) // bject { ctx: {…}, name: "blue" }
+        return this.state.name
       }
     }
 
@@ -99,7 +101,7 @@
     // 5. 假如现在额外加入一个黄色状态:
     class YellowState {
       constructor(ctx) {
-        this.ctx =ctx
+        this.ctx = ctx
         this.name = 'yellow'
       }
       change(){

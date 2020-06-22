@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .state {
+      background-color: aqua;
+      height: 150px;
+      width: 150px;
+    }
+  </style>
+</head>
+<body>
+  <div class="state_box">
+    <div class="state"> </div>
+    <button data-act="pay">支付</button>
+    <button data-act="cancel">取消</button>
+    <button data-act="print">取票</button>
+  </div>
+  <script>
+    // 利用状态模式写一个电影票订单状态: 需要有步骤:
+    // 订单已创建, 代付款->已付款, 待取票(已取消, 订单关闭)-> 已取票(完成)
+
+    // 1. 先定义以上4中状态
+    class State1{
+      constructor(ctx){
+        this.name = '待支付'
+        this.ctx = ctx
+        // 5. 完善按钮,把不需要被点击到的按钮禁用:
+        this.available = ['cancel', 'pay']
+      }
+      print(){}
+      cancel(){
+        this.ctx.state = new State3(this.ctx)
+      }
+      pay(){
+        this.ctx.state = new State2(this.ctx)
+      }
+    }
+    class State2{
+      constructor(ctx) {
+        this.name = '待出票'
+        this.ctx =ctx
+        // 5. 
+        this.available = ['print']
+      }
+      print(){
+        this.ctx.state = new State4(this.ctx)
+      }
+      cancel(){}
+      pay(){}
+    }
+    class State3{
+      constructor(ctx){
+        this.name='订单取消'
+        this.ctx = ctx
+        // 5. 
+        this.available = []
+      }
+      print(){}
+      cancel(){}
+      pay(){}
+    }
+    class State4{
+      constructor(ctx) {
+        this.name='已完成'
+        this.ctx = ctx
+        // 5. 
+        this.available = []
+      }
+      print(){}
+      cancel(){}
+      pay(){}
+    }
+
+    // 2. 创建上下文:
+    class Context{
+      constructor() { this.state = new State1(this) }
+      print(){ this.state.print() }
+      cancel(){ this.state.cancel() }
+      pay(){ this.state.pay() }
+      getStateName() { return this.state.name}
+      // 5. 
+      getAvailableActs(){ return this.state.available }
+    }
+
+    // 3. 创建客户端:
+    class Client{
+      constructor(btn,elstate,ctx) {
+        this.ctx = ctx
+        this.btn = btn
+        this.elstate = elstate
+        this.elstate.innerHTML = ctx.getStateName()
+        this.btn.forEach(element => {          
+          element.addEventListener('click', this.handleClick.bind(this))
+        });
+        // 5.
+        this.toggleDisable()
+      }
+      handleClick(e){
+        const act = e.target.dataset.act
+        this.ctx[act]()
+        this.elstate.innerHTML = this.ctx.getStateName()
+        // 5.
+        this.toggleDisable()
+      }
+      // 5. 完善按钮,把不需要被点击到的按钮禁用:
+      toggleDisable(){
+        this.btn.forEach(element =>{
+          if (this.ctx.getAvailableActs().includes(element.dataset.act))
+            element.disabled = false
+          else
+            element.disabled = true
+        })
+      }
+    }
+
+    // 4. 调用:
+    const btn = Array.from(document.querySelectorAll('button'))
+    const state = document.querySelector('.state')
+    const ctx = new Context();
+    const client = new Client(btn, state, ctx)
+  </script>
+</body>
+</html>

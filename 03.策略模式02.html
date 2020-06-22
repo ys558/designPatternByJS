@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .boxs {
+        display: flex;
+      }
+      .box {
+        width: 100px;
+        height: 100px;
+        text-align: center;
+        line-height: 100px;
+        background-color: antiquewhite;
+        border: 1px solid black;
+        border-radius: 50%;
+        cursor: pointer;
+      }
+      .active {
+        background: rgba(170, 67, 67, 0.637);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="boxs">
+      <div class="box" value="高">高</div>
+      <div class="box" value="富">富</div>
+      <div class="box" value="帅">帅</div>
+    </div>
+    <script>
+      class Client {
+        // 1. 将handleClick()方法里的逻辑单独抽离, 封装成Strategy类, 传递给构造方法:
+        constructor(nodes, strategy) {
+          this.nodes = [...nodes];
+          this.strategy = strategy;
+          this.initEvent();
+        }
+        initEvent() {
+          this.nodes.forEach((element) => {
+            element.addEventListener("click", (e) => {
+              this.handleClick(e.target);
+            });
+          });
+        }
+        handleClick(ele) {
+          this.strategy.process(ele, this.nodes)
+        }
+      }
+
+      // 选择
+      class Strategy1 {
+        process(ele, nodes){
+          ele.classList.toggle('active')
+        }
+      }
+      class Strategy2 {
+        process(ele, nodes){
+          const items = nodes.filter(item => item.classList.contains('active'))
+          if (items.length ===2 && !items.includes(ele)) return;
+          ele.classList.toggle('active')
+        }
+      }
+
+      // 选择2个后, 再想选择第3个时, 其中两个的随机一个会消失不选
+      class Strategy3 {
+        process(ele, nodes){
+          ele.classList.toggle('active')
+          if (nodes.every(item => item.classList.contains('active'))){
+            nodes.filter(item => item !== ele)[Math.floor(Math.random()*2)]
+            .classList.toggle('active')
+          }
+        }
+      }
+
+      // 这里可以传入不同策略:
+      const client = new Client(document.querySelectorAll('.box'), new Strategy3())
+    </script>
+  </body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .container{
+        height: 20rem;
+        width: 20rem;
+        background-color: antiquewhite;
+      }
+      #a, #b { border: solid 1px brown; }
+      .active {
+        background: aquamarine;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h3>😀</h3>
+      <input type="text" />
+      <div class="boxs">
+        <div id="a">a</div>
+        <div id="b">b</div>
+        <div id="c">数字</div>
+      </div>
+    </div>
+    <script>
+      document.querySelector("input").addEventListener("input", function() {
+        // 如果.boxs里面的div是不确定的, 那么需要用观察者模式重构的代码: 
+        document.querySelector("#a").classList.toggle("active", this.value.indexOf("a") != -1);
+        document.querySelector("#b").classList.toggle("active", this.value.indexOf("b") != -1);
+        document.querySelector("#c").classList.toggle("active", /\d/.test(this.value));
+      });
+    </script>
+  </body>
+</html>

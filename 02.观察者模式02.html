@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .container{
+        height: 20rem;
+        width: 20rem;
+        background-color: antiquewhite;
+      }
+      #a, #b { border: solid 1px brown; }
+      .active {
+        background: aquamarine;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h3>😀</h3>
+      <input type="text" />
+      <div class="boxs"></div>
+    </div>
+    <script>
+      // 观察者模式:
+      // 在此需求中, 需要订阅input框的输入, 再决定下面的区块是否需要高亮字块:
+      class input {
+        constructor(el){
+          this.observers = []
+          el.addEventListener('input', e => {
+            // 通知观察者, 即input框
+            this.notifyAll(e.target.value)
+          })
+        }
+        notifyAll(value){
+          this.observers.forEach(item =>item.notify(value))
+        }
+        addObserver(ob) {
+          this.observers.push(ob)
+        }
+      }
+
+      class Observer extends DocumentFragment {
+        constructor(txt){
+          super()
+          this.div = document.createElement('div')
+          this.div.className = 'box'
+          this.div.innerHTML = txt
+          document.querySelector('.boxs').append(this.div)
+        }
+        notify(value){
+          this.div.classList.toggle('active', this.handle(value))
+        }
+      }
+
+      class defaultObserver extends Observer {
+        constructor(txt){
+          // super 直接调用其父类 Observer的constructor()h函数的所有属性:
+          super(txt)
+          this.txt = txt
+        }
+        handle(value){
+          return value.indexOf(this.txt) !== -1
+        }
+      }
+
+      class numberOberserver extends Observer{
+        constructor(txt){
+          super(txt)
+        }
+        handle(value){ return /\d/.test(value) }
+      }
+
+      // 1. 用观察者订阅input输入框:
+      const ipt = new input(document.querySelector('input'))
+      // 2. 利用input类中的addObserver函数创建新的div:
+      ipt.addObserver(new defaultObserver('a'))
+      ipt.addObserver(new defaultObserver('b'))
+      ipt.addObserver(new defaultObserver('c'))
+      ipt.addObserver(new numberOberserver('数字'))
+    </script>
+  </body>
+</html>

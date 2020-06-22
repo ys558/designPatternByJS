@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .state{
+      height: 150px;
+      width: 150px;
+      background-color: red;
+    }
+  </style>
+</head>
+<body>
+  <div class="state_box">
+    <div class="state">Y Y</div>
+    <button id="act">切换</button>
+  </div>
+
+  <script>
+    // let state = "red";
+    // const elstate = document.querySelector('.state')
+    // document.querySelector('button').addEventListener('click', e=>{
+    //   if (state === 'red'){
+    //     state = 'blue'
+    //   }else if(state=='blue'){
+    //     state = 'green'
+    //   }else if(state=='green'){
+    //     state = 'red'
+    //   }
+    //   elstate.style.background = state
+    // })
+
+    // 改写为状态模式:
+
+    // 1. 定义上下文状态类, 维护当前状态
+    class Context{
+      constructor(){
+        // 默认状态:
+        this.state = new RedState(this)
+      }
+      change(){
+        this.state.change()
+      }
+      getStateName(){
+        return this.state.name
+      }
+    }
+
+    // 2. 将所有状态进行抽象:
+    class RedState{
+      constructor(ctx){
+        this.ctx = ctx
+        this.name = 'red'
+      }
+      change(){
+        this.ctx.state = new BlueState(this.ctx)
+      }
+    }
+    class BlueState{
+      constructor(ctx){
+        this.ctx = ctx
+        this.name = 'blue'
+      }
+      change(){
+        this.ctx.state = new GreenState(this.ctx)
+      }
+    }
+
+    class GreenState{
+      constructor(ctx){
+        this.ctx = ctx
+        this.name = 'green'
+      }
+      change(){
+        // this.ctx.state = new RedState(this.ctx)
+        // 5. 配合步骤5, 新增了黄色状态, 将其切换到YellowState
+        this.ctx.state = new YellowState(this.ctx)
+      }
+    }
+
+    // 3. 做一个客户端类: 整个界面的事件响应:
+    class Client{
+      constructor(btn,elstate,ctx) {
+        btn.addEventListener('click', e =>{
+          ctx.change()
+          elstate.style.background = ctx.getStateName()
+        })
+      }
+    }
+
+    // 4. 实例化并运行:
+    const btn = document.querySelector('button')
+    const state = document.querySelector('.state')
+    const ctx = new Context()
+    const client = new Client(btn, state, ctx)
+
+    // 5. 假如现在额外加入一个黄色状态:
+    class YellowState {
+      constructor(ctx) {
+        this.ctx =ctx
+        this.name = 'yellow'
+      }
+      change(){
+        this.ctx.state = new RedState(this.ctx)
+      }
+    }
+  </script>
+
+</body>
+</html>

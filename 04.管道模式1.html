@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body{
+      margin:0;padding: 0;
+    }
+    .steps {
+      display: flex;
+    }
+    .step {
+      width: 38px;
+      height: 38px;
+      line-height: 38px;
+      text-align: center;
+      background-color: antiquewhite;
+    }
+    .boxs .box {
+      position: relative;
+      height: 30px;
+      width: 30px;
+      line-height: 30px;
+      background-color: rgb(100, 62, 100);
+      border-radius: 50%;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="steps">
+    <div class="step active">一</div>
+    <div class="step step2">二</div>
+    <div class="step step3">三</div>
+    <div class="step step4">四</div>
+  </div>
+  <div class="boxs">
+    <div class="box">🧑</div>
+  </div>
+  <script>
+    class pipe {
+      constructor(){
+        this.handles = []
+      }
+      addHandle(hdl){
+        this.handles.push(hdl)
+        return this
+      }
+      async start(ctx){
+        for(let i of this.handles){
+          const ret = i.process(ctx)
+          if (ret && ret instanceof Promise) await ret
+        }
+      }
+    }
+    class handle{
+      constructor(el){
+        this.el = el
+      }
+      process(ctx){
+        this.el.classList.toggle('active')
+        ctx.style.left = `${this.el.offsetLeft}px`
+        this.handle(ctx)
+      }
+    }
+
+    class handle1 extends handle {
+      constructor(el){
+        super(el)
+      }
+      handle(ctx){ ctx.innerText = "👦" }
+    }
+    class handle2 extends handle {
+      constructor(el){
+        super(el)
+      }
+      handle(ctx){ ctx.innerText = "🧓" }
+    }
+    class handle3 extends handle {
+      constructor(el){
+        super(el)
+      }
+      handle(ctx){ ctx.innerText = "👴" }
+    }
+
+    class waitHandle{
+      process(ctx){
+        return new Promise((res, rej)=>setTimeout(()=> res(), 3000))
+      }
+    }
+    
+    const ip = new pipe()
+    .addHandle(new waitHandle())
+    .addHandle(new handle1(document.querySelector('.step2')))
+    .addHandle(new waitHandle())
+    .addHandle(new handle2(document.querySelector('.step3')))
+    .addHandle(new waitHandle())
+    .addHandle(new handle3(document.querySelector('.step4')))
+    .start(document.querySelector('.box'))
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body { margin: 0; padding: 0; box-sizing: border-box;}
+    .item-container {
+      width: 400px;
+      height: 200px;
+      line-height: 200px;
+      background-color: antiquewhite;
+    }
+    .container{ display: flex; }
+    .left { background-color: aquamarine;}
+    .right { background-color:cadetblue;}
+    .left, .right {
+      width: 200px;
+      height: 200px;
+      line-height: 200px;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="pipe">
+    <div class="item-container"></div>
+  </div>
+  <div class="container">
+    <div class="left"></div>
+    <div class="right"></div>
+  </div>
+  <script>
+    // 把type=1放到.left的box里，2放到.right里
+    const item = [
+      {txt: '👨‍🏭', type:1},
+      {txt: '👨‍✈️', type:1},
+      {txt: '🍕', type:2},
+      {txt: '👨‍🎨', tyrpe:1},
+      {txt: '🥐', type:2},
+      {txt: '👨‍⚖️', type:1},
+      {txt: '🍩', type:2},
+      {txt: '🍙', type:2},
+      {txt: '👨‍🌾', type:1},
+      {txt: '🥗', type:2},
+      {txt: '👨‍', type:1},
+      {txt: '🍔', type:2},
+      {txt: '👩‍🚒', type:1},
+      {txt: '👨‍🍳', type:1},
+    ]
+
+    class Checker {
+      // 普通类的做法：只用if语句进行分类，没有面向对象思想：
+      process(item){
+        // 如果type增加一个类型，扩展时要在原有代码里进行修改：
+        // 面向对象的要求时要将步骤独立开来进行独立维护：
+        if(item.type===1){}
+        else if (item.type===2){}
+      }
+    }
+  </script>
+</body>
+</html>

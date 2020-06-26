@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      .item-container {
+        /* 布局： */
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        flex-flow: row wrap;
+
+        width: 300px;
+        height: 100px;
+        background-color: antiquewhite;
+      }
+      .container {
+        display: flex;
+      }
+      .left {
+        background-color: aquamarine;
+      }
+      .right {
+        background-color: cadetblue;
+      }
+      .left, .right {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        flex-flow: row wrap;
+        width: 150px;
+        height: 50px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="pipe">
+      <div class="item-container"></div>
+    </div>
+    <div class="container">
+      <div class="left"></div>
+      <div class="right"></div>
+    </div>
+    <script>
+      // 把type=1放到.left的box里，2放到.right里
+      const items = [
+        { txt: "👨‍🏭", type: 1 },
+        { txt: "👨‍✈️", type: 1 },
+        { txt: "🍕", type: 2 },
+        { txt: "👨‍🎨", tyrpe: 1 },
+        { txt: "🥩", type: 2 },
+        { txt: "👨‍⚖️", type: 1 },
+        { txt: "🍩", type: 2 },
+        { txt: "🍙", type: 2 },
+        { txt: "👨‍🌾", type: 1 },
+        { txt: "🥗", type: 2 },
+        { txt: "👨‍", type: 1 },
+        { txt: "🍔", type: 2 },
+        { txt: "🍤", type: 2 },
+        { txt: "👩‍🚒", type: 1 },
+        { txt: "👩‍", type: 1 },
+        { txt: "👨‍🔬", type: 1 },
+        { txt: "🧀", type: 2 },
+        { txt: "👨‍🍳", type: 1 },
+        { txt: "🥞", type: 2 },
+        { txt: "🍝", type: 2 },
+      ];
+
+      class Checker {
+        constructor(box) {
+          this.box = box;
+        }
+        // 模板方法，将原来01的类里的逻辑独立出两步：
+        // 检测 process
+        // 加入 joinItem
+        process(item) {
+          if (this.check(item)) this.joinItem(item);
+        }
+        joinItem(item) {
+          this.box.join(item);
+        }
+      }
+
+      class HumanChecker extends Checker {
+        check (item) { return item.type === 1 }
+      }
+      class FoodChecker extends Checker {
+        check(item) { return item.type === 2 }
+      }
+      /* 以上为模板方法的基础架构 */
+
+      class Box {
+        constructor(el) { this.el = el }
+        join(item) {
+          const div = document.createElement('div')
+          div.innerHTML = item.txt
+          div.className = 'item'
+          this.el.append(div)
+        }
+      }
+
+      // 实例化：
+      const leftBox = new Box(document.querySelector('.left'))
+      const rightBox = new Box(document.querySelector('.right'))
+
+      const human = new HumanChecker(leftBox)
+      const food = new FoodChecker(rightBox)
+
+      // 动态处理：
+      const mappedItem = items.map(i =>{
+        const div = document.createElement('div')
+        div.innerHTML = i.txt
+        div.className = 'item'
+        i.el = div
+        return i
+      })
+
+      mappedItem.forEach(i => {
+        document.querySelector('.item-container').append(i.el)
+      })
+
+      setInterval(()=>{
+        const popItem = mappedItem.pop()
+        if (!popItem) return;
+
+        human.process(popItem)
+        food.process(popItem)
+
+        popItem.el.remove()
+      },600)
+    </script>
+  </body>
+</html>

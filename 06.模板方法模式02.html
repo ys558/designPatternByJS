@@ -30,7 +30,8 @@
       .right {
         background-color: cadetblue;
       }
-      .left, .right {
+      .left,
+      .right {
         display: flex;
         flex-direction: row;
         align-items: flex-start;
@@ -50,28 +51,26 @@
     </div>
     <script>
       // 把type=1放到.left的box里，2放到.right里
-      const items = [
-        { txt: "👨‍🏭", type: 1 },
-        { txt: "👨‍✈️", type: 1 },
-        { txt: "🍕", type: 2 },
-        { txt: "👨‍🎨", tyrpe: 1 },
-        { txt: "🥩", type: 2 },
-        { txt: "👨‍⚖️", type: 1 },
-        { txt: "🍩", type: 2 },
-        { txt: "🍙", type: 2 },
-        { txt: "👨‍🌾", type: 1 },
-        { txt: "🥗", type: 2 },
-        { txt: "👨‍", type: 1 },
-        { txt: "🍔", type: 2 },
-        { txt: "🍤", type: 2 },
-        { txt: "👩‍🚒", type: 1 },
-        { txt: "👩‍", type: 1 },
-        { txt: "👨‍🔬", type: 1 },
-        { txt: "🧀", type: 2 },
-        { txt: "👨‍🍳", type: 1 },
-        { txt: "🥞", type: 2 },
-        { txt: "🍝", type: 2 },
-      ];
+
+      // 2. 模拟接口获取, 异步 async/await写法
+      // const getItems = (async () =>
+      //   await [{ txt: "👨‍🏭", type: 1 },{ txt: "👨‍✈️", type: 1 },{ txt: "🍕", type: 2 },{ txt: "👨‍🎨", tyrpe: 1 },{ txt: "🥩", type: 2 },{ txt: "👨‍⚖️", type: 1 },{ txt: "🍩", type: 2 },{ txt: "🍙", type: 2 },{ txt: "👨‍🌾", type: 1 },{ txt: "🥗", type: 2 },{ txt: "👨‍", type: 1 },{ txt: "🍔", type: 2 },{ txt: "🍤", type: 2 },{ txt: "👩‍🚒", type: 1 },{ txt: "👩‍", type: 1 },{ txt: "👨‍🔬", type: 1 },{ txt: "🧀", type: 2 },{ txt: "👨‍🍳", type: 1 },{ txt: "🥞", type: 2 },{ txt: "🍝", type: 2 },
+      //   ])();
+
+      // 2. 模拟接口获取, 异步 Promise写法
+      const getItems = new  Promise((res, rej)=>{
+        try {
+          setTimeout(()=> res([
+              { txt: "👨‍🏭", type: 1 },{ txt: "👨‍✈️", type: 1 },{ txt: "🍕", type: 2 },{ txt: "👨‍🎨", tyrpe: 1 },{ txt: "🥩", type: 2 },{ txt: "👨‍⚖️", type: 1 },{ txt: "🍩", type: 2 },{ txt: "🍙", type: 2 },{ txt: "👨‍🌾", type: 1 },{ txt: "🥗", type: 2 },{ txt: "👨‍", type: 1 },{ txt: "🍔", type: 2 },{ txt: "🍤", type: 2 },{ txt: "👩‍🚒", type: 1 },{ txt: "👩‍", type: 1 },{ txt: "👨‍🔬", type: 1 },{ txt: "🧀", type: 2 },{ txt: "👨‍🍳", type: 1 },{ txt: "🥞", type: 2 },{ txt: "🍝", type: 2 },
+          ]), 2000)
+        }catch (error){
+          rej(error)
+          console.log(error)
+        }
+      })
+
+      // 1. 同步写法:
+      // const items = [{ txt: "👨‍🏭", type: 1 },{ txt: "👨‍✈️", type: 1 },{ txt: "🍕", type: 2 },{ txt: "👨‍🎨", tyrpe: 1 },{ txt: "🥩", type: 2 },{ txt: "👨‍⚖️", type: 1 },{ txt: "🍩", type: 2 },{ txt: "🍙", type: 2 },{ txt: "👨‍🌾", type: 1 },{ txt: "🥗", type: 2 },{ txt: "👨‍", type: 1 },{ txt: "🍔", type: 2 },{ txt: "🍤", type: 2 },{ txt: "👩‍🚒", type: 1 },{ txt: "👩‍", type: 1 },{ txt: "👨‍🔬", type: 1 },{ txt: "🧀", type: 2 },{ txt: "👨‍🍳", type: 1 },{ txt: "🥞", type: 2 },{ txt: "🍝", type: 2 },];
 
       class Checker {
         constructor(box) {
@@ -89,52 +88,85 @@
       }
 
       class HumanChecker extends Checker {
-        check (item) { return item.type === 1 }
+        check(item) {
+          return item.type === 1;
+        }
       }
       class FoodChecker extends Checker {
-        check(item) { return item.type === 2 }
+        check(item) {
+          return item.type === 2;
+        }
       }
       /* 以上为模板方法的基础架构 */
 
       class Box {
-        constructor(el) { this.el = el }
+        constructor(el) {
+          this.el = el;
+        }
         join(item) {
-          const div = document.createElement('div')
-          div.innerHTML = item.txt
-          div.className = 'item'
-          this.el.append(div)
+          const div = document.createElement("div");
+          div.innerHTML = item.txt;
+          div.className = "item";
+          this.el.append(div);
         }
       }
 
       // 实例化：
-      const leftBox = new Box(document.querySelector('.left'))
-      const rightBox = new Box(document.querySelector('.right'))
+      const leftBox = new Box(document.querySelector(".left"));
+      const rightBox = new Box(document.querySelector(".right"));
 
-      const human = new HumanChecker(leftBox)
-      const food = new FoodChecker(rightBox)
+      const human = new HumanChecker(leftBox);
+      const food = new FoodChecker(rightBox);
 
       // 动态处理：
-      const mappedItem = items.map(i =>{
-        const div = document.createElement('div')
-        div.innerHTML = i.txt
-        div.className = 'item'
-        i.el = div
-        return i
-      })
+      
+      // 2. async/await 和 Promise异步写法, 均需要从.then()回调获取:
+      getItems.then((response) => {
+        const items = response.map((i) => {
+          const div = document.createElement("div");
+          div.innerHTML = i.txt;
+          div.className = "item";
+          i.el = div;
+          return i;
+        });
 
-      mappedItem.forEach(i => {
-        document.querySelector('.item-container').append(i.el)
-      })
+        items.forEach((i) => {
+          document.querySelector(".item-container").append(i.el);
+        });
 
-      setInterval(()=>{
-        const popItem = mappedItem.pop()
-        if (!popItem) return;
+        setInterval(() => {
+          const popItem = items.pop();
+          if (!popItem) return;
 
-        human.process(popItem)
-        food.process(popItem)
+          human.process(popItem);
+          food.process(popItem);
 
-        popItem.el.remove()
-      },600)
+          popItem.el.remove();
+        }, 600);
+      });
+
+      // 1. 普通同步写法:
+      // const mappedItem = items.map(i =>{
+      //   const div = document.createElement('div')
+      //   div.innerHTML = i.txt
+      //   div.className = 'item'
+      //   i.el = div
+      //   return i
+      // })
+
+      // mappedItem.forEach(i => {
+      //   document.querySelector('.item-container').append(i.el)
+      // })
+
+      // setInterval(()=>{
+      //   const popItem = mappedItem.pop()
+      //   if (!popItem) return;
+
+      //   human.process(popItem)
+      //   food.process(popItem)
+
+      //   popItem.el.remove()
+      // },600)
     </script>
   </body>
 </html>
